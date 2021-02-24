@@ -1,0 +1,27 @@
+#!/usr/bin/ash
+
+run_hook() {
+  modprobe -a -q tpm_crb >/dev/null 2>&1
+  local skip_tpm pin_code cpt=3
+
+  read -t 3 -r -p "Skip TPM? [y/N] " skip_tpm
+  [ "${?}" -eq 1 ] && echo
+  if [ -n "${skip_tpm}" ] && [ "${skip_tpm}" = "y" ]; then
+    :
+  else
+    export TPM2TOOLS_TCTI="device:/dev/tpm0"
+    tpm2_unseal -c 0x81000000 -p pcr:sha256:0,2,4,7,14 -o /wrappedKey
+    if [ -f /wrappedKey ]; then
+      while [ "${cpt}" -gt 0 ]; do
+        read -rsp "PIN: " pin_code && echo
+        if openssl enc -d -aes-256-cbc -pass pass:"${pin_code}" -md sha512 --pbkdf2 --iter 100000 -in /wrappedKey -out /crypto_keyfile.bin >/dev/null 2>&1; then
+          cpt=0
+        else
+          sleep "$((6/cpt))" && echo -ne "invalid\n"
+          cpt=$((cpt-1))
+        fi
+      done
+      rm -f /wrappedKey
+    fi
+  fi
+}
