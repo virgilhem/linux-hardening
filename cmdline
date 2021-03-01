@@ -1,6 +1,6 @@
 oops=panic
-random.trust_cpu=off 
 vsyscall=none ipv6.disable=1 debugfs=off
 intel_iommu=on iommu=force efi=disable_early_pci_dma
-lsm=lockdown,yama,apparmor,bpf lockdown=confidentiality modules.sig_enforce=1 nohibernate
+random.trust_cpu=off rng_core.default_quality=1000
 page_alloc.shuffle=1 slab_nomerge init_on_alloc=1 init_on_free=1 slub_debug=FZ pti=on
+lsm=lockdown,yama,apparmor,bpf lockdown=confidentiality modules.sig_enforce=1 nohibernate
