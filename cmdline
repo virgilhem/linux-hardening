@@ -1,4 +1,5 @@
 oops=panic
+systemd.unified_cgroup=hierarchy=1
 vsyscall=none ipv6.disable=1 debugfs=off
 random.trust_cpu=off rng_core.default_quality=1000
 intel_iommu=on iommu=force efi=disable_early_pci_dma
